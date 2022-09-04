@@ -1,0 +1,15 @@
+altgraph==0.17.2
+autopep8==1.7.0
+commonmark==0.9.1
+future==0.18.2
+keyboard==0.13.5
+pefile==2022.5.30
+pycodestyle==2.9.1
+Pygments==2.13.0
+pyinstaller==5.3
+pyinstaller-hooks-contrib==2022.10
+pywin32==304
+pywin32-ctypes==0.2.0
+rich==12.5.1
+toml==0.10.2
+WMI==1.5.1

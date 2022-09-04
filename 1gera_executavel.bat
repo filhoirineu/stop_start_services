@@ -1,0 +1,1 @@
+pyinstaller.exe .\main.py --name "Start Stop TotvsProtheus Services" --distpath "dist/Start Stop TotvsProtheus Services" --icon=technical-support.ico --noconfirm --onefile
