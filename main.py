@@ -28,16 +28,31 @@ def main():
             clear_screen()
             if option in ("START","STOP","RESTART"):
                 process_services(CONSOLE_ATUAL, services_info, option)
-                print(
-        Align("[bold green]   ... FINALIZADO ... ", align="center"))
-                sleep(5)
-                clear_screen()
             elif option in ("SAIR", "EXIT"):
                 finaliza_programa(CONSOLE_ATUAL)
                 break
+            elif option in ("ATUALIZAR", "REFRESH"):
+                pass
             else:
-                error_message(CONSOLE_ATUAL,
-            "OPCAO: " + option + ", INVALIDA!!!")
+
+                id_exists = False
+                for s in services_info:
+                    if s.id == option:
+                        id_exists = True
+                        service = ServiceManager(s.service_name,s.process_name)
+                        if service.is_online:
+                            newoption = "STOP"
+                        else:
+                            newoption = "START"
+
+                        process_services(CONSOLE_ATUAL, [s] , newoption)
+                        break
+
+
+                if not id_exists:
+                    error_message(CONSOLE_ATUAL,
+                "OPCAO: " + option + ", INVALIDA!!!")
+
     else:
 
         error_message(CONSOLE_ATUAL,
@@ -45,8 +60,8 @@ def main():
 
 if __name__ == "__main__":
     try:
-        configuracao_tela()
-        sleep(0.5)
+        #configuracao_tela()
+        #sleep(0.5)
         main()
     except:
         data_erro = datetime.now().strftime('%Y%m%d_%H%M%S')

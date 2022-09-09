@@ -17,6 +17,8 @@ MARGEM = " " * 20
 
 CAPTION = "." * 8
 
+def clear_screen():
+    os.system("cls")
 
 def configuracao_tela():
     keyboard.press('left windows')
@@ -24,11 +26,9 @@ def configuracao_tela():
     keyboard.release('up')
     keyboard.release('left windows')
 
-
 def pula_linha(CONSOLE_ATUAL: Console = Console(), vezes: int = 1):
     for i in range(vezes):
         CONSOLE_ATUAL.print("")
-
 
 def cabecalho_programa(CONSOLE_ATUAL):
     pula_linha(CONSOLE_ATUAL, 2)
@@ -38,10 +38,8 @@ def cabecalho_programa(CONSOLE_ATUAL):
         Align("           [green on white]   by: @filhoirineu   ", align="center"))
     pula_linha(CONSOLE_ATUAL, 1)
 
-
 def config_ini_file():
     return "@configuration.ini"
-
 
 def get_info_from_key(config, section, key):
     info_return = ""
@@ -51,7 +49,6 @@ def get_info_from_key(config, section, key):
             info_return = config[section][key]
 
     return info_return
-
 
 def get_info_from_config_ini_file():
     services = []
@@ -70,19 +67,18 @@ def get_info_from_config_ini_file():
 
     return services
 
-
 def services_info_table(services_info_table):
     table = Table(
         show_lines=True,
     )
 
-    table.add_column(Align("ID", align="center"), justify="center")
-    table.add_column(Align("SESSAO", align="center"), justify="left")
-    table.add_column(Align("NOME DE EXIBICAO", align="center"), justify="left")
-    table.add_column(Align("NOME DO SERVICO", align="center"), justify="left")
-    table.add_column(Align("NOME DO PROCESSO", align="center"), justify="left")
-    table.add_column(Align("HABILITADO", align="center"), justify="center")
-    table.add_column(Align("STATUS", align="center"), justify="center")
+    table.add_column(Align("[bold white on blue]ID", align="center"), justify="center")
+    table.add_column(Align("[bold white on blue]SESSAO", align="center"), justify="left")
+    table.add_column(Align("[bold white on blue]NOME DE EXIBICAO", align="center"), justify="left")
+    table.add_column(Align("[bold white on blue]NOME DO SERVICO", align="center"), justify="left")
+    table.add_column(Align("[bold white on blue]NOME DO PROCESSO", align="center"), justify="left")
+    table.add_column(Align("[bold white on blue]HABILITADO", align="center"), justify="center")
+    table.add_column(Align("[bold white on blue]STATUS", align="center"), justify="center")
 
     for service in services_info_table:
         id = service.id
@@ -112,7 +108,6 @@ def services_info_table(services_info_table):
 
     return table
 
-
 def initial_screen(CONSOLE_ATUAL: Console = Console(), services_info: list = []):
 
     clear_screen()
@@ -124,8 +119,7 @@ def initial_screen(CONSOLE_ATUAL: Console = Console(), services_info: list = [])
 
     cabecalho_programa(CONSOLE_ATUAL)
 
-    return Prompt.ask(MARGEM + "[bold yellow]START/STOP/RESTART/SAIR").upper()
-
+    return Prompt.ask(MARGEM + "[bold yellow]ID/START/STOP/RESTART/REFRESH/EXIT").upper()
 
 def finaliza_programa(CONSOLE_ATUAL: Console = Console()):
 
@@ -139,7 +133,6 @@ def finaliza_programa(CONSOLE_ATUAL: Console = Console()):
         Align("[bold green]   by: Irineu Filho (@filhoirineu)   ", align="center"))
     sleep(5)
 
-
 def error_message(CONSOLE_ATUAL: Console = Console(), message: str = ""):
 
     clear_screen()
@@ -150,7 +143,6 @@ def error_message(CONSOLE_ATUAL: Console = Console(), message: str = ""):
 
     sleep(5)
 
-
 def process_services(CONSOLE_ATUAL: Console = Console(), servicos: list = [], opcao: str = ""):
 
     clear_screen()
@@ -160,11 +152,11 @@ def process_services(CONSOLE_ATUAL: Console = Console(), servicos: list = [], op
         show_lines=True
     )
 
-    table.add_column("ID")
-    table.add_column("NOME DE EXIBICAO")
-    table.add_column("NOME DO SERVICO")
-    table.add_column("NOME DO PROCESSO")
-    table.add_column("STATUS", justify="center")
+    table.add_column("[bold white on blue]ID")
+    table.add_column("[bold white on blue]NOME DE EXIBICAO")
+    table.add_column("[bold white on blue]NOME DO SERVICO")
+    table.add_column("[bold white on blue]NOME DO PROCESSO")
+    table.add_column("[bold white on blue]STATUS", justify="center")
 
     # update 4 times a second to feel fluid
     with Live(Align(table, align="center"), refresh_per_second=4):
@@ -180,21 +172,25 @@ def process_services(CONSOLE_ATUAL: Console = Console(), servicos: list = [], op
                           process_name, "[bold yellow]EXECUTANDO")
             service = ServiceManager(service_name, process_name)
 
-            if opcao in ("START"):
-                service.start_service()
-                status = "[bold white on green]" + \
-                    service.service_status_description
-            elif opcao in ("STOP"):
-                service.stop_service()
-                status = "[bold white on red]" + \
-                    service.service_status_description
-            elif opcao in ("RESTART"):
-                service.restart_service()
-                status = "[bold white on green]" + \
-                    service.service_status_description
+            if not service.is_disabled:
+                if opcao in ("START"):
+                    service.start_service()
+                    status = "[bold white on green]" + \
+                        service.service_status_description
+                elif opcao in ("STOP"):
+                    service.stop_service()
+                    status = "[bold white on red]" + \
+                        service.service_status_description
+                elif opcao in ("RESTART"):
+                    service.restart_service()
+                    status = "[bold white on green]" + \
+                        service.service_status_description
+            else:
+                status = "[bold white on red]DESABILITADO"
 
             table.add_row("", "", "", "", status)
 
-
-def clear_screen():
-    os.system("cls")
+    print(
+        Align("[bold green]   ... FINALIZADO ... ", align="center"))
+    sleep(5)
+    clear_screen()
